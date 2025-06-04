@@ -20,7 +20,7 @@ public class FollowPlayerGoal extends BaseGoal {
     protected boolean shouldStart() {
         updatePlayer();
         boolean result = player != null && player.isAlive();
-        Log.sendMessage("Trying to follow player: " + (result ? player.getName().getString() : "null"));
+//        Log.sendMessage("Trying to follow player: " + (result ? player.getName().getString() : "null"));
         return result;
     }
 
@@ -28,7 +28,7 @@ public class FollowPlayerGoal extends BaseGoal {
     protected boolean shouldContinue() {
         updatePlayer();
         boolean result = player != null && player.isAlive();
-        Log.sendMessage("Continuing to follow player: " + (result ? player.getName().getString() : "null"));
+//        Log.sendMessage("Continuing to follow player: " + (result ? player.getName().getString() : "null"));
         return result;
     }
 
@@ -54,7 +54,7 @@ public class FollowPlayerGoal extends BaseGoal {
 
     private void moveToPlayer() {
         if (player == null || !player.isAlive()) {
-            Log.sendMessage("Player is not available for following.");
+//            Log.sendMessage("Player is not available for following.");
 //            finish("Player not available");
             return;
         }

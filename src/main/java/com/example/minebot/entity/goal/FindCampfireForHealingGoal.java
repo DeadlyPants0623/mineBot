@@ -16,7 +16,7 @@ public class FindCampfireForHealingGoal extends BaseGoal {
     @Override
     protected boolean shouldStart() {
         if (bot.getHealth() >= bot.getShouldHealHealth()) return false;
-        targetCampfire = findNearestCampfire(10); // 10 block radius
+        targetCampfire = findNearestCampfire(20); // 10 block radius
         return targetCampfire != null;
     }
 
@@ -29,8 +29,8 @@ public class FindCampfireForHealingGoal extends BaseGoal {
     @Override
     protected void onStart() {
         if (targetCampfire != null) {
-            Log.sendMessage("Found campfire at " + targetCampfire);
-            moveTo(targetCampfire.above()); // Stand above the campfire
+//            Log.sendMessage("Found campfire at " + targetCampfire);
+            moveTo(targetCampfire.east()); // Stand above the campfire
         }
     }
 

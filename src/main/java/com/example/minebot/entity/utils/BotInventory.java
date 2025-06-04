@@ -1,6 +1,7 @@
 package com.example.minebot.entity.utils;
 
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,28 @@ public class BotInventory extends SimpleContainer {
             count -= remove;
 
             if (count <= 0) return;
+        }
+    }
+
+    public boolean contains(Item item) {
+        for (int i = 0; i < getContainerSize(); i++) {
+            ItemStack stack = getItem(i);
+            if (stack.getItem() == item) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeItem(Item item, int count) {
+        for (int i = 0; i < getContainerSize(); i++) {
+            ItemStack stack = getItem(i);
+            if (stack.getItem() == item) {
+                int toRemove = Math.min(count, stack.getCount());
+                stack.shrink(toRemove);
+                count -= toRemove;
+                if (count <= 0) return;
+            }
         }
     }
 }

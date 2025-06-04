@@ -26,7 +26,7 @@ public class CommandEvents {
 
                 // Spawn custom MineBotEntity
                 MineBotEntity bot = new MineBotEntity(ModEntities.MINEBOT.get(), level);
-                bot.setPos(player.getX() + 5, player.getY(), player.getZ());
+                bot.setPos(player.getX() - 5, player.getY(), player.getZ());
                 bot.setCustomName(Component.literal("MineBot"));
                 bot.setPersistenceRequired(); // So it doesn't despawn
 

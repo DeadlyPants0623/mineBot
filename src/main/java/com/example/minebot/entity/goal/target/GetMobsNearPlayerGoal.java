@@ -22,13 +22,18 @@ public class GetMobsNearPlayerGoal extends TargetGoalBase {
 
         List<LivingEntity> entities = mob.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10));
         for (LivingEntity entity : entities) {
-            if (entity instanceof MineBotEntity) continue;
-            if (!(entity instanceof Monster)) continue;
             if (!entity.isAlive()) continue;
-            Log.sendMessage("Found target entity: " + entity.getName().getString());
+            if (!(entity instanceof Monster)) continue;
+            if (entity instanceof MineBotEntity || entity.getTags().contains("minebot")) continue;
+
+            if (MineBotEntity.claimedTargets.containsKey(entity.getUUID())) continue; // already targeted
+
+            // Claim and return
+            MineBotEntity.claimedTargets.put(entity.getUUID(), mob.getUUID());
+            Log.sendMessage("Claimed target: " + entity.getName().getString());
             return entity;
         }
-        Log.sendMessage("No valid target found near player.");
+//        Log.sendMessage("No valid target found near player.");
         return null;
     }
 }

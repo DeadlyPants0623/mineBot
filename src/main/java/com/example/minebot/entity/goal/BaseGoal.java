@@ -21,6 +21,9 @@ public abstract class BaseGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (completed && shouldStart()) {
+            completed = false;
+        }
         return !completed && shouldStart();
     }
 

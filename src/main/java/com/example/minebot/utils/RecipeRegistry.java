@@ -32,21 +32,21 @@ public class RecipeRegistry {
     private static final Map<Item, SimpleRecipe> RECIPES = new HashMap<>();
 
     static {
-        // ✅ Crafting Table = 4 planks -> 1 table
+        // Crafting Table = 4 planks -> 1 table
         register(new ItemStack(Items.CRAFTING_TABLE),
                 Collections.nCopies(4, Ingredient.of(new ItemLike[]{
                         Items.OAK_PLANKS, Items.SPRUCE_PLANKS, Items.BIRCH_PLANKS,
                         Items.JUNGLE_PLANKS, Items.ACACIA_PLANKS, Items.DARK_OAK_PLANKS
                 })));
 
-        // ✅ Stick = 2 planks -> 4 sticks
+        // Stick = 2 planks -> 4 sticks
         register(new ItemStack(Items.STICK, 4),
                 Collections.nCopies(2, Ingredient.of(new ItemLike[]{
                         Items.OAK_PLANKS, Items.SPRUCE_PLANKS, Items.BIRCH_PLANKS,
                         Items.JUNGLE_PLANKS, Items.ACACIA_PLANKS, Items.DARK_OAK_PLANKS
                 })));
 
-        // ✅ Furnace = 8 cobblestone -> 1 furnace
+        // Furnace = 8 cobblestone -> 1 furnace
         register(new ItemStack(Items.FURNACE),
                 Collections.nCopies(8, Ingredient.of(Items.COBBLESTONE)));
     }

@@ -40,6 +40,9 @@ public class FollowPlayerGoal extends BaseGoal {
     @Override
     protected void onTick() {
         moveToPlayer();
+        if (player != null) {
+            bot.getLookControl().setLookAt(player, 30.0F, 30.0F); // 👁️ Look at player
+        }
     }
 
     private void updatePlayer() {

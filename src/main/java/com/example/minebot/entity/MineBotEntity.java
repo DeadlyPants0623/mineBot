@@ -2,18 +2,25 @@ package com.example.minebot.entity;
 
 import com.example.minebot.Log;
 import com.example.minebot.entity.goal.*;
+import com.example.minebot.entity.goal.HarvestingGoal;
 import com.example.minebot.entity.goal.target.GetMobsNearPlayerGoal;
 import com.example.minebot.entity.utils.BotInventory;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.*;
 
@@ -54,6 +61,7 @@ public class MineBotEntity extends Zombie {
         super(type, level);
         Log.sendMessage("MineBot at your service!!");
         this.setCanPickUpLoot(true);
+        this.getNavigation().setCanFloat(true);
         this.addTag("minebot"); // in MineBotEntity constructor
     }
 
@@ -61,13 +69,14 @@ public class MineBotEntity extends Zombie {
     protected void registerGoals() {
         this.goalSelector.getAvailableGoals().clear();
         this.targetSelector.getAvailableGoals().clear();
-//        this.goalSelector.addGoal(1, new FindCampfireForHealingGoal(this, 1.0D));
+        this.goalSelector.addGoal(0, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(1, new HealGoal(this, 1.0D));
-//        this.goalSelector.addGoal(2, new SmartCombatGoal(this, 32.0D));
-        this.goalSelector.addGoal(3, new GetMobsNearPlayerGoal(this));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, true));
-//        this.goalSelector.addGoal(4, new FindBedToSleepGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new FollowPlayerGoal(this, 1.0D));
+        this.goalSelector.addGoal(2, new GetMobsNearPlayerGoal(this));
+        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(4, new PrepareFarmGoal(this, 1.0D));
+        this.goalSelector.addGoal(5, new HarvestingGoal(this, Blocks.WHEAT, 1.0D));
+        this.goalSelector.addGoal(6, new PlantingGoal(this, Blocks.WHEAT, 1.0D));
+        this.goalSelector.addGoal(7, new FollowPlayerGoal(this, 1.0D));
         // Add more goals as needed
     }
 
@@ -80,6 +89,7 @@ public class MineBotEntity extends Zombie {
     public void aiStep() {
         super.aiStep();
         tryPickupNearbyItems();
+//        openAndCloseFenceGates();
         // Wake up if it's day
         if (this.isSleeping() && this.level().getDayTime() < 12000) {
             this.stopSleeping();
@@ -157,9 +167,32 @@ public class MineBotEntity extends Zombie {
     public static AttributeSupplier.Builder createAttributes() {
         return Zombie.createAttributes()
                 .add(Attributes.MAX_HEALTH, 100.0D)
-                .add(Attributes.ATTACK_DAMAGE, 5.0D)
+                .add(Attributes.ATTACK_DAMAGE, 20.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.4D);
     }
 
+    @Override
+    protected GroundPathNavigation createNavigation(Level level) {
+        GroundPathNavigation navigation = new GroundPathNavigation(this, level);
+        navigation.setCanOpenDoors(true);
+        return navigation; // Return as PathNavigation
+    }
+
+    public void openAndCloseFenceGates() {
+        BlockPos pos = this.blockPosition();
+
+        for (BlockPos target : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 1, 1))) {
+            BlockState state = this.level().getBlockState(target);
+            if (state.getBlock() instanceof FenceGateBlock) {
+                if (!state.getValue(FenceGateBlock.OPEN)) {
+                    this.level().setBlock(target, state.setValue(FenceGateBlock.OPEN, true), 3);
+                }
+                if (state.getValue(FenceGateBlock.OPEN)) {
+                    this.level().setBlock(target, state.setValue(FenceGateBlock.OPEN, false), 3);
+                }
+
+            }
+        }
+    }
 }
